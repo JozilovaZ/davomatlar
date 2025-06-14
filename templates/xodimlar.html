@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-light bg-white shadow-sm mb-4">
+            <div class="container-fluid">
+                <span class="navbar-brand">Xodimlar va Davomat Boshqaruvi</span>
+                <div>
+                    <span class="navbar-text">Foydalanuvchi: Admin</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Xodimlar Section -->
+        <section id="xodimlar" class="mt-5">
+            <div class="d-flex justify-content-between mb-3">
+                <h2>Xodimlar</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Yangi Xodim Qo'shish</button>
+            </div>
+            <div class="mb-3">
+                <input type="text" id="searchEmployee" class="form-control" placeholder="Xodimni qidirish...">
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Ism</th>
+                        <th>Lavozim</th>
+                        <th>Telefon</th>
+                        <th>Manzil</th>
+                        <th>Rol</th>
+                        <th>Holati</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody id="employeeTable">
+                {% if xodimlar %}
+                {% for xodim in xodimlar %}
+                    <tr>
+                            <td>{{ xodim.user.username }}</td>
+                            <td>{{ xodim.lavozim }}</td>
+                            <td>{{ xodim.telefon_raqam }}</td>
+                            <td>{{ xodim.manzil }}</td>
+                            <td>{{ xodim.user_role }}</td>
+                            <td>
+                                {% if xodim.is_active %}
+                                <span class="badge bg-success">Faol</span>
+                                {% else %}
+                                <span class="badge bg-danger"> Faol emas</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                 <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateEmployeeModal">Tahrirlash</button>
+                                <a class="btn btn-sm btn-danger" href="{% url 'delete' xodim.id %}">O'chirish</a>
+                            </td>
+                    </tr>
+                {% endfor %}
+                {% else %}
+                <p class="text-muted"> Hozircha XOdimlar yo`q</p>
+                {% endif %}
+                </tbody>
+            </table>
+
+            <!-- Add Employee Modal -->
+            <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" >
+                            <h5 class="modal-title" id="addEmployeeModalLabel">Yangi Xodim Qo'shish</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form  method="POST">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Foydalanuvchi Ismi</label>
+                                     <select class="form-select" id="username" name="username" required>
+                                         {% for user in users %}
+                                        <option value="{{ user.id }}">{{ user.username }}</option>
+                                         {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lavozim" class="form-label">Lavozim</label>
+                                    <input type="text" class="form-control" id="lavozim" name="lavozim" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefon_raqam" class="form-label">Telefon Raqami</label>
+                                    <input type="text" class="form-control" id="telefon_raqam" name="telefon_raqam" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="manzil" class="form-label">Manzil</label>
+                                    <input type="text" class="form-control" id="manzil" name="manzil" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="user_role" class="form-label">Rol</label>
+                                    <select class="form-select" id="user_role" name="user_role">
+                                        <option value="admin">Admin</option>
+                                        <option value="kadr">Kadr</option>
+                                        <option value="boshliq">Boshliq</option>
+                                        <option value="xodim" selected>Xodim</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="is_active" class="form-label">Faolmi?</label>
+                                    <select class="form-select" id="is_active" name="is_active">
+                                        <option value="True">Ha</option>
+                                        <option value="Folse" selected>Yo'q</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Saqlash</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="updateEmployeeModal" tabindex="-1" aria-labelledby="updateEmployeeModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" >
+                            <h5 class="modal-title" id="#">Tahrirlash</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form  method="POST">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Foydalanuvchi Ismi</label>
+                                     <select class="form-select" id="usernames" name="username" required>
+                                         {% for user in users %}
+                                        <option value="{{ user.id }}">{{ user.username }}</option>
+                                         {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lavozim" class="form-label">Lavozim</label>
+                                    <input type="text" class="form-control" id="lavozims" name="lavozim" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefon_raqam" class="form-label">Telefon Raqami</label>
+                                    <input type="text" class="form-control" id="telefon_raqams" name="telefon_raqam" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="manzil" class="form-label">Manzil</label>
+                                    <input type="text" class="form-control" id="manzils" name="manzil" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="user_role" class="form-label">Rol</label>
+                                    <select class="form-select" id="user_roles" name="user_role">
+                                        <option value="admin">Admin</option>
+                                        <option value="kadr">Kadr</option>
+                                        <option value="boshliq">Boshliq</option>
+                                        <option value="xodim" selected>Xodim</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="is_active" class="form-label">Faolmi?</label>
+                                    <select class="form-select" id="is_actives" name="is_active">
+                                        <option value="True">Ha</option>
+                                        <option value="Folse" selected>Yo'q</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Saqlash</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+{% endblock content%}

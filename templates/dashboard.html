@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-light bg-white shadow-sm mb-4">
+            <div class="container-fluid">
+                <span class="navbar-brand">Xodimlar va Davomat Boshqaruvi</span>
+                <div>
+                    <span class="navbar-text">Foydalanuvchi: Admin</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard">
+            <h2 class="mb-4">Dashboard</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card p-3">
+                        <h5>Jami Xodimlar</h5>
+                        <h3>{{ count }}</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3">
+                        <h5>Bugungi Davomat</h5>
+                        <h3>{{ davomat }}</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-3">
+                        <h5>Kechikkanlar</h5>
+                        <h3>{{ kechikkanlar }}</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+{% endblock content%}

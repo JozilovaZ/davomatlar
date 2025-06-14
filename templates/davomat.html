@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-light bg-white shadow-sm mb-4">
+            <div class="container-fluid">
+                <span class="navbar-brand">Xodimlar va Davomat Boshqaruvi</span>
+                <div>
+                    <span class="navbar-text">Foydalanuvchi: Admin</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Davomat Section -->
+        <section id="davomat" class="mt-5">
+            <div class="d-flex justify-content-between mb-3">
+                <h2>Davomat</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAttendanceModal">Davomat Qo'shish</button>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Xodim</th>
+                        <th>Kelish Vaqti</th>
+                        <th>Chiqish Vaqti</th>
+                        <th>Status</th>
+                        <th>Eslatmalar</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceTable">
+                {% if davomatlar %}
+                {% for davomat in davomatlar %}
+                    <tr>
+                        <td>{{ davomat.xodim.user.username }}</td>
+                        <td>{{ davomat.kerish_vaqti }}</td>
+                        <td>{{ davomat.chiqish_vaqti }}</td>
+                        <td>{{ davomat.status_r }}</td>
+                        <td>{{ davomat.eslatmalar }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning edit-attendance" data-id="{{ davomat.id }}">Tahrirlash</button>
+                            <a class="btn btn-sm btn-danger " href="{% url 'deleteD' davomat.id %}">O'chirish</a>
+                        </td>
+                    </tr>
+                 {% endfor %}
+                    {% else %}
+                <p class="text-muted"> Hozircha davomat yow</p>
+                {% endif %}
+                </tbody>
+            </table>
+
+            <!-- Add Attendance Modal -->
+            <div class="modal fade" id="addAttendanceModal" tabindex="-1" aria-labelledby="addAttendanceModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addAttendanceModalLabel">Davomat Qo'shish</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="xodim" class="form-label">Xodim</label>
+                                    <select class="form-select" id="xodim" name="xodim" required>
+                                        {% for xodim in xodimlar %}
+                                        <option value="{{ xodim.id }}">{{ xodim }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="kerish_vaqti" class="form-label">Kelish Vaqti</label>
+                                    <input type="datetime-local" class="form-control" id="kerish_vaqti" name="kerish_vaqti" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="chiqish_vaqti" class="form-label">Chiqish Vaqti</label>
+                                    <input type="datetime-local" class="form-control" id="chiqish_vaqti" name="chiqish_vaqti" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="status_r" class="form-label">Status</label>
+                                    <select class="form-select" id="status_r" name="status_r">
+                                        <option value="kelgan">Kelgan</option>
+                                        <option value="kelmagan">Kelmagan</option>
+                                        <option value="tatil">Tatil</option>
+                                        <option value="kechikkan">Kechikkan</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="eslatmalar" class="form-label">Eslatmalar</label>
+                                    <input type="text" class="form-control" id="eslatmalar" name="eslatmalar">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Saqlash</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+{% endblock content%}
